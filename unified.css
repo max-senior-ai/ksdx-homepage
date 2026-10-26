@@ -118,11 +118,11 @@ header nav{font-size:1.25rem}.story h3,.story .meta,.news-row h3,.news-row .meta
 
 /* Quiet editorial refinement: fine rules, deliberate pauses, restrained light. */
 :root{--fine-rule:rgba(42,76,120,.23);--slow-ease:cubic-bezier(.22,.55,.3,1)}
-main{background:radial-gradient(ellipse 85% 14% at 5% 18%,#dce9ed25,transparent 78%),radial-gradient(ellipse 70% 20% at 96% 42%,#dce3f32e,transparent 75%),radial-gradient(ellipse 80% 13% at 25% 63%,#e5eaf026,transparent 80%),#fff}
+main{background:radial-gradient(ellipse 85% 14% at 5% 18%,#dce9ed29,transparent 78%),radial-gradient(ellipse 70% 20% at 96% 42%,#dce3f333,transparent 75%),radial-gradient(ellipse 80% 13% at 25% 63%,#e5eaf02a,transparent 80%),#fff}
 body:before{opacity:.4;animation-duration:60s}
 .hero{border:1px solid #7892b326;box-shadow:0 12px 55px #203c6604}
 .hero .photo{box-shadow:inset 0 0 0 1px #7892b31a}
-.about{min-height:810px;padding-block:195px;background:radial-gradient(ellipse at 17% 62%,#e4edf83d,transparent 64%),radial-gradient(ellipse at 84% 26%,#e2e8f436,transparent 60%)}
+.about{min-height:810px;padding-block:195px;background:radial-gradient(ellipse at 17% 62%,#e4edf843,transparent 64%),radial-gradient(ellipse at 84% 26%,#e2e8f43b,transparent 60%)}
 .vision-atmosphere{opacity:.6}
 .vision-atmosphere i{animation-duration:48s}
 .vision-atmosphere b{animation-duration:30s}
@@ -176,3 +176,46 @@ body:before{opacity:.4;animation-duration:60s}
 main{background-size:112% 108%;animation:paper-light 70s ease-in-out infinite alternate}
 @keyframes paper-light{from{background-position:0% 0%}to{background-position:75% 30%}}
 @media(prefers-reduced-motion:reduce){main{animation:none}}
+
+/* Visible but quiet atmosphere, with independent light and motion layers. */
+.vision-atmosphere{opacity:.95}
+.vision-atmosphere i{border-color:#496b9a30;animation-duration:43.636s}
+.vision-atmosphere b{background:#7496c18a;animation-duration:27.273s;box-shadow:0 0 20px #6486ab28}
+body:before{opacity:.44}
+.history .history-map{width:618.269px;height:116.38%;top:14.61%;opacity:calc(var(--map-reveal)*.2574)}
+.history-map .map-land{opacity:.175214}
+.capture .history .history-map{opacity:.2574}
+@keyframes hero-zoom-in{from{transform:scale(1.02)}to{transform:scale(1.0926)}}
+@keyframes hero-zoom-out{from{transform:scale(1.0926)}to{transform:scale(1.02)}}
+@keyframes hero-glide-left{from{transform:scale(1.065) translateX(1.936%)}to{transform:scale(1.065) translateX(-1.936%)}}
+@keyframes hero-glide-right{from{transform:scale(1.065) translateX(-1.936%)}to{transform:scale(1.065) translateX(1.936%)}}
+.hero.water-active .photo img{filter:url(#hero-water-filter)}
+.water-defs{position:absolute;width:0;height:0;overflow:hidden;pointer-events:none}
+.hero-water-ring{position:absolute;width:34px;height:24px;left:var(--water-x);top:var(--water-y);border:1px solid #ffffff52;border-radius:50%;z-index:2;pointer-events:none;box-shadow:0 0 14px #ffffff15,inset 0 0 9px #ffffff18;animation:surface-wave 2.8s cubic-bezier(.16,.5,.3,1) both}
+@keyframes surface-wave{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}15%{opacity:.5}100%{opacity:0;transform:translate(-50%,-50%) scale(7)}}
+.contact-link{position:relative;overflow:hidden;isolation:isolate;padding-left:0;transition:background-color 1s ease,border-color 1s ease}
+.contact-link:before{content:'';position:absolute;inset:-50% auto -50% -70%;width:40%;background:linear-gradient(90deg,transparent,#ffffff18,transparent);transform:skewX(-24deg);pointer-events:none;opacity:0}
+.contact-link:hover,.contact-link:focus-visible{padding-left:0;background:#ffffff04;color:#fff}
+.contact-link:hover .arrow,.contact-link:focus-visible .arrow{transform:none}
+.contact-link.pressed{animation:none;transform:none}
+.contact-link:hover:before,.contact-link:focus-visible:before{animation:button-sheen 1.8s var(--slow-ease) both}
+.contact h2:after{content:'';display:block;width:104px;height:1px;margin-top:30px;background:linear-gradient(90deg,#ffffff45,transparent)}
+.contact .reveal.in h2{animation:invitation-light 14s ease-in-out infinite}
+.contact .reveal.in>p{animation:invitation-breath 16s ease-in-out infinite}
+@keyframes invitation-light{0%,100%{text-shadow:0 0 0 #dceaff00}50%{text-shadow:0 0 24px #dceaff18}}
+@keyframes invitation-breath{0%,100%{opacity:.88}50%{opacity:1}}
+footer .back-top{border:1px solid #ffffff50;border-radius:12px;min-height:54px;padding:12px 22px;gap:30px;background:#ffffff09;transition:background .6s,box-shadow .6s}
+footer .back-top:after{display:none}
+footer .back-top:hover{background:#ffffff16;box-shadow:0 4px 24px #00000012}
+.ambient-thread{position:absolute;pointer-events:none;width:280px;height:120px;overflow:visible;z-index:0;opacity:.45;filter:drop-shadow(0 8px 7px #15345c0c)}
+.ambient-thread path{fill:none;stroke:#6985a42b;stroke-width:.7}
+.ambient-thread circle{fill:#4f759a80}
+.purpose>.ambient-thread{left:2%;top:38%;width:190px;opacity:.3}
+.business>.ambient-thread{right:6%;bottom:20px;width:330px}
+.history>.ambient-thread{left:1%;bottom:90px;width:200px;opacity:.32}
+.contact>.ambient-thread{right:4%;top:12px;width:340px;opacity:.55}
+.contact>.ambient-thread path{stroke:#c3d8f02b}
+.contact>.ambient-thread circle{fill:#d0e1f480}
+.purpose-intro,.purpose-stats,.purpose-origin,.services{position:relative;z-index:1}
+@media(max-width:600px){.history .history-map{width:454.609px;height:94.559%;top:27.621%}.ambient-thread{max-width:45vw;opacity:.3}.purpose>.ambient-thread{display:none}.business>.ambient-thread{bottom:12px}.contact h2:after{margin-top:24px}.hero-water-ring{display:none}}
+@media(prefers-reduced-motion:reduce){.history .history-map{opacity:.2574}.ambient-thread,.hero-water-ring{display:none}.hero.water-active .photo img{filter:none}.contact .reveal.in h2,.contact .reveal.in>p{animation:none}.contact-link:before{display:none}}

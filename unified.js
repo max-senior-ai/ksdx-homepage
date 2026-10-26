@@ -89,3 +89,50 @@ document.querySelectorAll('.purpose-origin p').forEach((p,i)=>{
 const newsSection=document.querySelector('#news');
 function alignNewsAtmosphere(){const photo=newsSection.querySelector('.story .photo');if(photo){const bottom=photo.getBoundingClientRect().bottom-newsSection.getBoundingClientRect().top;newsSection.style.setProperty('--news-dusk-end',Math.round(bottom)+'px')}}
 const newsSizeObserver=new ResizeObserver(alignNewsAtmosphere);newsSizeObserver.observe(newsSection);alignNewsAtmosphere();
+
+// Sparse travelling points sit behind content, following a different line in each section.
+const ambientPaths=[
+ ['.purpose','M10 95 C75 110 80 10 150 25 S235 95 280 30',38],
+ ['.business','M0 85 L115 85 C180 85 175 25 230 25 L280 25',32],
+ ['.history','M15 110 C-10 20 150 -5 240 60 S285 100 270 115',42],
+ ['.contact','M0 95 C75 25 160 100 280 20',36]
+];
+ambientPaths.forEach(([selector,path,duration],index)=>{
+ const section=document.querySelector(selector);if(!section)return;
+ const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');
+ svg.setAttribute('class','ambient-thread');svg.setAttribute('viewBox','0 0 280 120');svg.setAttribute('aria-hidden','true');svg.setAttribute('focusable','false');
+ const line=document.createElementNS(ns,'path');line.setAttribute('d',path);
+ const dot=document.createElementNS(ns,'circle');dot.setAttribute('r','2.2');
+ const motion=document.createElementNS(ns,'animateMotion');motion.setAttribute('path',path);motion.setAttribute('dur',duration+'s');motion.setAttribute('begin',(-index*8)+'s');motion.setAttribute('repeatCount','indefinite');motion.setAttribute('calcMode','paced');dot.append(motion);svg.append(line,dot);section.prepend(svg);
+});
+
+// Pointer-driven refraction is limited to the photo; text and controls remain stable.
+const heroSurface=document.querySelector('.hero');
+const waterDefs=document.createElementNS('http://www.w3.org/2000/svg','svg');
+waterDefs.setAttribute('class','water-defs');waterDefs.setAttribute('aria-hidden','true');
+waterDefs.innerHTML='<defs><filter id="hero-water-filter" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".009 .018" numOctaves="1" seed="7" result="water"/><feDisplacementMap in="SourceGraphic" in2="water" scale="0" xChannelSelector="R" yChannelSelector="G"/></filter></defs>';
+heroSurface.append(waterDefs);
+const refraction=waterDefs.querySelector('feDisplacementMap'),waterNoise=waterDefs.querySelector('feTurbulence');
+let waterFrame=0,waterPower=0,waterTarget=0,lastWave=0,lastMove=0,lastWaterX=0,lastWaterY=0;
+function settleWater(now){
+ if(reduce.matches||document.hidden){waterPower=waterTarget=0}
+ if(now-lastMove>100)waterTarget*=.9;
+ waterPower+=(waterTarget-waterPower)*.075;
+ refraction.setAttribute('scale',waterPower.toFixed(3));
+ waterNoise.setAttribute('baseFrequency',(.009+Math.sin(now*.00032)*.0005).toFixed(5)+' '+(.018+Math.cos(now*.00027)*.0007).toFixed(5));
+ if(waterPower>.025||waterTarget>.025)waterFrame=requestAnimationFrame(settleWater);
+ else{refraction.setAttribute('scale','0');heroSurface.classList.remove('water-active');waterFrame=0}
+}
+heroSurface.addEventListener('pointermove',event=>{
+ if(reduce.matches||event.pointerType!=='mouse')return;
+ const rect=heroSurface.getBoundingClientRect(),x=event.clientX-rect.left,y=event.clientY-rect.top;
+ if(x<rect.width*.42||event.target.closest('a,button')){waterTarget=0;return}
+ const now=performance.now(),distance=Math.hypot(x-lastWaterX,y-lastWaterY);
+ waterTarget=Math.min(5,1.8+distance*.06);lastMove=now;lastWaterX=x;lastWaterY=y;
+ heroSurface.classList.add('water-active');if(!waterFrame)waterFrame=requestAnimationFrame(settleWater);
+ if(now-lastWave>240&&heroSurface.querySelectorAll('.hero-water-ring').length<7){
+  lastWave=now;const ring=document.createElement('span');ring.className='hero-water-ring';ring.setAttribute('aria-hidden','true');ring.style.setProperty('--water-x',x+'px');ring.style.setProperty('--water-y',y+'px');heroSurface.append(ring);ring.addEventListener('animationend',()=>ring.remove(),{once:true});
+ }
+},{passive:true});
+heroSurface.addEventListener('pointerleave',()=>{waterTarget=0});
+reduce.addEventListener('change',()=>{if(reduce.matches){waterTarget=0;heroSurface.querySelectorAll('.hero-water-ring').forEach(r=>r.remove())}});
