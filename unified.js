@@ -19,7 +19,7 @@ addEventListener('scroll',()=>{if(!pending){pending=true;requestAnimationFrame(u
 // Shared theme: older adults encountering digital services and participating together.
 const heroPhoto=document.querySelector('.hero .photo');
 const slides=[{src:'assets-concept-smart.jpg',alt:'스마트경로당에서 함께 배우는 시니어의 콘셉트 이미지'},{src:'assets-concept-community.jpg',alt:'시니어 커뮤니티 운동 공간 콘셉트 이미지'},{src:'assets-concept-learning.jpg',alt:'디지털 배움 콘셉트 이미지'},{src:'assets-cms-enhanced.jpg',alt:'CMS 콘텐츠 관리 시연 현장 보정 사진'}];
-// Four messages drawn from the founding purpose; one per image, every five seconds.
+// Four messages drawn from the founding purpose; one per image, every 6.5 seconds.
 const heroCopy=document.querySelector('.hero-copy');
 const messageStage=document.createElement('div');messageStage.className='hero-messages';
 heroCopy.prepend(messageStage);
@@ -41,7 +41,7 @@ heroMessages.forEach((message,messageIndex)=>{
    node.textContent.split(/(\s+)/).forEach(word=>{if(!word.trim()){fragment.append(document.createTextNode(word));return}
     const group=document.createElement('span');group.className='mist-word';group.setAttribute('aria-hidden','true');
     [...word].forEach(letter=>{const char=document.createElement('span');char.className='mist-letter';char.textContent=letter;const n=letterIndex++;
-     char.style.setProperty('--mist-delay',Math.min(n*17,410)+'ms');char.style.setProperty('--mist-x',(18+(n*7)%27)+'px');char.style.setProperty('--mist-y',(-12-(n*11)%24)+'px');char.style.setProperty('--mist-rotate',(-5+(n*3)%11)+'deg');group.append(char)});fragment.append(group)});node.replaceWith(fragment)});
+     char.style.setProperty('--mist-delay',Math.min(n*17,410)+'ms');char.style.setProperty('--mist-x',(3+(n*7)%5)+'px');char.style.setProperty('--mist-y',(-2-(n*11)%4)+'px');char.style.setProperty('--mist-rotate','0deg');group.append(char)});fragment.append(group)});node.replaceWith(fragment)});
  });
 });
 let messageIndex=0,messageCleanup;
@@ -78,21 +78,12 @@ const captureMode=new URLSearchParams(location.search).has('capture');
 // Keep full accessible values and prose; only the visual layer animates.
 const countObserver=new IntersectionObserver(entries=>{entries.forEach(e=>{if(!e.isIntersecting)return;const el=e.target;countObserver.unobserve(el);const final=el.dataset.value;const suffix=el.dataset.suffix;const start=performance.now();function tick(now){const t=Math.min(1,(now-start)/850);const value=Math.round(Number(final)*(1-Math.pow(1-t,3)));el.innerHTML=value.toLocaleString('ko-KR')+'<span>'+suffix+'</span>';if(t<1)requestAnimationFrame(tick)}requestAnimationFrame(tick)})},{threshold:.6});
 document.querySelectorAll('.purpose-stat strong').forEach((el,i)=>{const values=[1000,83,65],suffixes=['만+','%','%'];el.setAttribute('aria-label',el.textContent);if(!reduce.matches&&!captureMode){el.dataset.value=values[i];el.dataset.suffix=suffixes[i];countObserver.observe(el)}});
-// Reverse the hero dissolution: scattered, blurred letters gather into readable prose.
-const typeObserver=new IntersectionObserver(entries=>{entries.forEach(e=>{if(!e.isIntersecting)return;typeObserver.unobserve(e.target);e.target.classList.add('typed-in')})},{threshold:.12,rootMargin:'0px 0px -30px 0px'});
-if(!reduce.matches&&!captureMode)document.querySelectorAll('.purpose-origin p').forEach((p,paragraphIndex)=>{
- const text=p.textContent;p.setAttribute('aria-label',text);p.textContent='';
- const visual=document.createElement('span');visual.setAttribute('aria-hidden','true');let index=0;
- text.split(/(\s+)/).forEach(word=>{
-  if(!word.trim()){visual.append(document.createTextNode(word));return}
-  const chunk=document.createElement('span');chunk.className='typed-word';
-  [...word].forEach(char=>{const span=document.createElement('span');span.className='typed-letter';span.textContent=char;const n=index++;
-   span.style.setProperty('--gather-x',(((n*17+13)%57)-28)+'px');
-   span.style.setProperty('--gather-y',(((n*23+9)%45)-22)+'px');
-   span.style.setProperty('--gather-turn',(((n*7)%13)-6)+'deg');
-   span.style.setProperty('--gather-delay',(paragraphIndex*220+(n*47)%650)+'ms');
-   chunk.append(span)});visual.append(chunk)});
- p.append(visual);typeObserver.observe(p);
+// Quiet paragraph fades preserve normal, selectable body text.
+document.querySelectorAll('.purpose-origin p').forEach((p,i)=>{
+ p.classList.add('origin-fade');
+ p.style.setProperty('--origin-delay',i*110+'ms');
+ if(reduce.matches||captureMode)p.classList.add('in');
+ else reveal.observe(p);
 });
 // Finish the full-width color transition before the first article's metadata.
 const newsSection=document.querySelector('#news');
